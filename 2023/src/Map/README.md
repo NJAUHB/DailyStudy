@@ -222,6 +222,43 @@ emplace_hint()函数用于通过使用提示作为元素位置将新元素插入
 * emplace_hint() 需要注意位置合法性,否则插入会失败。
 
 ## Iterators迭代器（）
+```
+// map::begin/end
+#include <iostream>
+#include <map>
+
+int main ()
+{
+  std::map<char,int> mymap;
+
+  mymap['b'] = 100;
+  mymap['a'] = 200;
+  mymap['c'] = 300;
+
+  // show content:
+  for (std::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+    std::cout << it->first << " => " << it->second << '\n';
+
+  return 0;
+}
+```
+`std::map<char, int>::iterator`是一个嵌套类型，它是 map 的迭代器类型。具体来说：
+
+* `std::map<char, int>`是 C++ 中的 map 类型，它保存 `key-value` 对。每个 `key` 是一个 `string`，每个 `value` 是一个 `int`；
+* `::iterator`是map类型的一个嵌套类型。一个迭代器就像一个指针，可以用来访问 map 中的元素。
+* 基于 C++11 及以上版本，有更简洁的写法，可以用`auto`关键字来让编译器自动推导类型：
+```
+for(auto it = mymap.begin(); it != mymap.end(); ++it) {
+    std::cout << it->first << " => " << it->second << '\n';
+}
+```
+或者用基于范围的`for`循环：
+```
+for(auto &pair : mymap) {
+    std::cout << pair.first << " => " << pair.second << '\n';
+}
+```
+参考代码MapUse4.cpp
 ## 查询（find--Searches the container for an element with a key equivalent to k and returns an iterator to it if found, otherwise it returns an iterator to map::end.)
 
 map::find()是C++ STL中的内置函数，该函数返回一个迭代器或常量迭代器，该迭代器或常量迭代器引用键在映射中的位置。如果键不存在于Map容器中，则它返回引用map.end()的迭代器或常量迭代器。  
