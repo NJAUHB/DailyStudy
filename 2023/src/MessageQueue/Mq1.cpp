@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstring>
+#include <cstring>// strlen
 #include <errno.h>
  
 #include <unistd.h>
@@ -53,7 +53,7 @@ inline mqd_t MyQueue::CreateMQ(const char *name) {
     return my_queue_id;
 }
 
-inline bool MyQueue::SendMsg(const char *msg_ptr){
+inline bool MyQueue::SendMsg(const char* msg_ptr){
     if (mq_send(my_queue_id, msg_ptr, strlen(msg_ptr), 0) == 0) {
         return true;
     } else {
@@ -61,7 +61,7 @@ inline bool MyQueue::SendMsg(const char *msg_ptr){
     }
 }
 
-inline bool MyQueue::GetMsg(char *msg_ptr, size_t msg_len){
+inline bool MyQueue::GetMsg(char* msg_ptr, size_t msg_len){
     if (mq_receive(my_queue_id, msg_ptr, msg_len, NULL) < 0) {
         return false;
     } else {
