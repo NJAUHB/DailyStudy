@@ -27,7 +27,7 @@
 * 默认初始化：在不使用初始化器构造变量时执行的初始化。  
 * 值初始化：在以空初始化器构造对象时进行的初始化  
 说人话：如果构造函数在未指定参数或者提供了一个空初始化器列表，则会调用默认构造函数：
-```
+```c++
 vector v1;
 vector v2{};
 ```
@@ -38,7 +38,7 @@ vector v2{};
 * 单参数构造函数（**c++11之前**）：转换构造函数必须是单参数构造函数。换句话说，它的参数数量必须是一个。有时，也可以看到有默认参数的转换构造函数，虽然这些构造函数的参数不止一个，但是其他参数都有默认值，所以仍然可以做到只需要一个参数就可以调用构造函数，这也算是转换构造函数。
 * 自动类型转换：编译器可以自动调用转换构造函数，进行必要的类型转换。例如，如果你试图把一个整数赋值给一个类对象，而这个类恰好有一个接受整数的转换构造函数，那么这个构造函数就会被自动调用，把这个整数转换为这个类的一个对象。
 * 转换构造函数并不总是好的：虽然在一些情况下转换构造函数很方便，但是在某些情况下，过度使用转换构造函数可能导致一些意料之外的结果。而且，由于转换构造函数能够隐式地进行类型转换，因此它们可能会使得代码难以理解和调试。
-```
+```c++
 class MyClass {
     private:
         int x;
@@ -56,7 +56,7 @@ int main() {
 ```
 ------------------------------------------------------------**在这里重点说明一下c++11之后的转换构造函数**------------------------------------------------------------  
 下例中：  
-```
+```c++
 struct foo
 {     // Converting constructor yes or no
   foo(int x);              // 1 y
@@ -68,7 +68,7 @@ struct foo
 Constructors 1 and 2 are both converting constructors in C++03 and C++11. Constructor 3, which must take two arguments, **is only a converting constructor in C++11**. The last, constructor 4, is not a converting constructor because it is [explicit](https://www.cnblogs.com/rednodel/p/9299251.html).  
 
 The following example is also a converting constructor in c++11
-```
+```c++
 class A{
     public:
         A(int a, int b){}
@@ -79,7 +79,7 @@ class A{
 >拷贝构造函数是C++独有的，它是一种特殊的构造函数，用基于同一类的一个对象构造和初始化另一个对象。当没有重载拷贝构造函数时，通过默认拷贝构造函数来创建一个对象  
 
 1、使用场景1：When an object of the class is passed (to a function) by value as an argument. 用对象1 初始化 对象2  
-```
+```c++
 A a;
 
 A b(a);
@@ -92,7 +92,7 @@ A b=a; 都是拷贝构造函数来创建对象b
 ```
 
 2、使用场景2：When an object of the class is passed (to a function) by value as an argument. 这个对象以值传递的方式传给全局函数形参  
-```
+```c++
 void func(AA a1)
 {
     cout<<a1.getA()<<endl;
@@ -107,7 +107,7 @@ void main()
 ```
 
 3、使用场景3：When an object of the class is returned by value. 在全局函数中，把对象作为返回值  
-```
+```c++
 AA func()
 {
     AA temp(100);//调用一次构造函数，创建temp对象
@@ -118,11 +118,12 @@ void main()
     AA a1 = func();/*这里是初始化a1，直接接过func返回的匿名对象，不再调用构造函数*/
     AA a2;
     a2 = func();//这里是给a2赋值，要调用构造函数
+}
 ```
 ### 拷贝构造函数重载声明
 拷贝构造函数重载声明如下：  
 `A (const A&other)`  
-```
+```c++
 class A {
   int m_i;
   A(const A& other):m_i(other.m_i) {
@@ -140,7 +141,7 @@ class A {
 >深拷贝：如果在复制这个对象的时候为新对象制作了外部对象的独立复制，就是深拷贝。改变一个对象的值，另一个不会变
 ## 赋值函数(operator = )
 当 一个类的对象 向 该类的另一个对象 赋值时，就会用到该类的赋值函数。当没有重载赋值函数（赋值运算符）时，通过默认赋值函数来进行赋值操作。
-```
+```c++
 A a;
 
 A b;
@@ -153,7 +154,7 @@ b=a;
 `A& operator = (const A& other)`  
 ### 赋值函数与拷贝构造函数的区别
 * 拷贝构造函数是一个对象初始化一块内存区域，这块内存就是新对象的内存区，而赋值函数是对于一个已经被初始化的对象来进行赋值操作。  
-```
+```c++
 class  A;
 A a;
 A b=a;   //调用拷贝构造函数（b不存在）
@@ -172,7 +173,7 @@ b = a ;   //调用赋值函数(b存在)
 
 **！！！！！！如果不想写拷贝构造函数和赋值函数，又不允许别人使用编译器生成的缺省函数，最简单的办法是将拷贝构造函数和赋值函数声明为私有函数，不用编写代码。！！！！！！**  
 eg：  
-```
+```c++
 class A {
   private:
   A(const A& a); //私有拷贝构造函数
