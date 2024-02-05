@@ -90,5 +90,5 @@ a在函数里不可被修改；
 3.   
 关于“指针常量”还是“指向常量的指针”，看到一个小tips：    
 从右往左读，遇到变量p就替换成"p is a"遇到"*"就替换成"point to"     
-`int const * p`读作：p is a point to const int, 指向常量的指针；  
+`int const* p`读作：p is a point to const int, 指向常量的指针； [**说明**：`int const* p`和`const int* p`在C++中表示完全相同的东西。都是表示p是一个指针，它指向一个常整数，你不能通过这个指针来改变这个整数的值。]   
 `int * const p`读作：p is a const point to int, 常量指针。  
