@@ -48,7 +48,8 @@ int main()
     auto ring = "hhh";
     Base* p_ = new Derived();
     Derived* p__ = new Derived();
-    // p_ -> PrintMessage();//报错
+    // p_ -> PrintMessage();// 报错
+    p_ -> PrintMessage(ring);
     p__ -> PrintMessage();
     return 0;
 }

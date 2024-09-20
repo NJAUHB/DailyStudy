@@ -35,7 +35,14 @@ map内部自建一颗红黑树，这颗树具有对数据自动排序的功能�
 
 2：如果要访问可能不存在的键,并在不存在时插入新键,使用[]。
 
-3：如果不想在不存在时插入,应使用find。 
+3：如果不想在不存在时插入,应使用find。
+```
+std::map<int, std::shared_ptr<int>> m;
+m[1] = std::make_shared<int>(3);
+// auto p = m.at(2); // core
+auto p = m[2];
+std::cout << std::boolalpha << (p == nullptr);  // [] 输出 "true"
+``` 
 
 参考代码MapUse1.cpp
 ## 元素修改（insert erase swap clear emplace emplace_hint操作）
@@ -264,3 +271,40 @@ for(auto &pair : mymap) {
 map::find()是C++ STL中的内置函数，该函数返回一个迭代器或常量迭代器，该迭代器或常量迭代器引用键在映射中的位置。如果键不存在于Map容器中，则它返回引用map.end()的迭代器或常量迭代器。  
 参考代码MapUse3.cpp
 
+## std::find_if
+std::find_if 是 C++ 标准库中的一个算法函数，用于在指定范围内查找满足特定条件的元素，并返回第一个满足条件的元素的迭代器。它的声明位于 <algorithm> 头文件中。
+
+函数原型如下：
+```
+template< class InputIt, class UnaryPredicate >
+InputIt find_if( InputIt first, InputIt last, UnaryPredicate p );
+```
+参数解释：
+
+first 和 last 定义了查找范围，表示要在 [first, last) 区间内查找。
+p 是一个一元谓词（Unary Predicate），是一个可调用对象（函数、函数指针、函数对象等），接受一个参数并返回 bool 类型的值。查找过程中，对于每个元素，p 会被调用一次，如果返回 true，则该元素满足条件，查找成功。
+返回值：
+
+如果找到满足条件的元素，则返回指向该元素的迭代器。
+如果未找到满足条件的元素，则返回 last。
+参考代码MapUse5.cpp
+
+## map.find和std::find的差异（特别是当map中的键值是自定义结构体的时候）
+
+在 std::map 中查找自定义结构体作为键的元素时，std::map::find 和 std::find 的行为和效率有显著差异。  
+
+特别是当 map 中的键值是自定义结构体时，这种差异更为明显。  
+
+std::map::find  
+    查找方式: 使用键快速查找。  
+    效率: 对于 std::map 是 O(log n)。  
+    要求: 自定义结构体需要定义 < 运算符（或者提供自定义比较函数），因为 std::map 需要对键进行排序。  
+std::find  
+    查找方式: 线性搜索，逐个检查元素。  
+    效率: O(n)，因为需要遍历整个容器。  
+    要求: 自定义结构体需要定义 == 运算符。  
+
+**总结**  
+std::map::find: 更高效（O(log n)），但要求键类型支持 < 运算符。用于 std::map 这种关联容器。  
+std::find: 低效（O(n)），但要求键类型支持 == 运算符。用于所有支持迭代器的容器。  
+对于查找操作，优先使用 std::map::find。只有在需要逐个检查或容器类型不支持 find 成员函数时，才考虑使用 std::find。  

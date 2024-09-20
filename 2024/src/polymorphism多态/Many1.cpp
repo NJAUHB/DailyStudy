@@ -2,7 +2,7 @@
 
 class AbstractSingleton {
 public:
-    virtual void SomeMethod();
+    virtual void SomeMethod(); //{ /* 应该提供一个默认实现，或者什么都不写 */ }
 };
 
 class SingletonImpl : public AbstractSingleton {
@@ -27,8 +27,8 @@ int main(){
     cr.tryVirtual();
     Vir vir;
     vir.tryVirtual();
-    // SingletonImpl sli; 编译报错
-    // sli.SomeMethod();
+    SingletonImpl sli; //编译报错
+    sli.SomeMethod();
 
     return 0;
 }
