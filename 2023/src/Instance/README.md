@@ -61,9 +61,11 @@ private:
     // 私有的构造函数，禁止外部直接创建实例。
     Singleton() {}
 
-    // 私有的拷贝构造函数和赋值操作符，防止被复制。
-    Singleton(const Singleton&) = delete;
-    Singleton& operator=(const Singleton&) = delete;
+    
+    Singleton(const Singleton&) = delete;//拷贝构造
+    Singleton& operator=(const Singleton&) = delete;//拷贝赋值
+    Singleton(Singleton&&) = delete;//移动构造
+    Singleton& operator=(Singleton&&) = delete;//移动赋值
 
 public:
     // 提供全局访问点
