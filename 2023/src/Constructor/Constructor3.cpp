@@ -1,19 +1,14 @@
 #include <iostream>
 using namespace std;
-class demo{
-public:
-   demo():num(new int(0)){
-      cout<<"construct!"<<endl;
-   }
-   //拷贝构造函数
-   demo(const demo &d):num(new int(*d.num)){
-      cout<<"copy construct!"<<endl;
-   }
-   ~demo(){
-      cout<<"class destruct!"<<endl;
-   }
-private:
-   int *num;
+class demo {
+ public:
+  demo() : num(new int(0)) { cout << "construct!" << endl; }
+  //拷贝构造函数
+  demo(const demo& d) : num(new int(*d.num)) { cout << "copy construct!" << endl; }
+  ~demo() { cout << "class destruct!" << endl; }
+
+ private:
+  int* num;
 };
 /*执行 get_demo() 函数内部的 demo() 语句，即调用 demo 类的默认构造函数生成一个匿名对象；
 *执行 return demo() 语句，会调用拷贝构造函数复制一份之前生成的匿名对象，并将其作为 get_demo() 函数的返回值（函数体执行完毕之前，匿名对象会被析构销毁）；
@@ -33,10 +28,10 @@ private:
 *class destruct!       <-- 销毁 get_demo() 返回的临时对象
 *class destruct!       <-- 销毁 a
 */
-demo get_demo(){
-    return demo();
+demo get_demo() {
+  return demo();
 }
-int main(){
-    demo a = get_demo();
-    return 0;
+int main() {
+  demo a = get_demo();
+  return 0;
 }

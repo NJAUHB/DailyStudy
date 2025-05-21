@@ -6,23 +6,24 @@
 #include <iostream>
 
 class InstanceExample {
-    public:
-        static InstanceExample* get_instance();
-        void Print();
-        // 释放单例，进程退出时调用
-        static void deleteInstance();
-    private:
-        InstanceExample();
-        ~InstanceExample();
+ public:
+  static InstanceExample* get_instance();
+  void Print();
+  // 释放单例，进程退出时调用
+  static void deleteInstance();
+
+ private:
+  InstanceExample();
+  ~InstanceExample();
 };
-InstanceExample::InstanceExample(){
-     std::cout << "构造函数" << this << std::endl;
+InstanceExample::InstanceExample() {
+  std::cout << "构造函数" << this << std::endl;
 }
-InstanceExample::~InstanceExample(){
-     std::cout << "析构函数" << this << std::endl;
+InstanceExample::~InstanceExample() {
+  std::cout << "析构函数" << this << std::endl;
 }
-inline void InstanceExample::Print(){
-    std::cout << "我的实例内存地址是:" << this << std::endl;
+inline void InstanceExample::Print() {
+  std::cout << "我的实例内存地址是:" << this << std::endl;
 }
 
 /*static InstanceExample instance;
@@ -37,30 +38,31 @@ inline void InstanceExample::Print(){
 *且相对于动态分配内存，访问栈内存更快。
 */
 InstanceExample* InstanceExample::get_instance() {
-    // static InstanceExample* instance = new InstanceExample();
-    static InstanceExample instance;
-    return &instance;
+  // static InstanceExample* instance = new InstanceExample();
+  static InstanceExample instance;
+  return &instance;
 }
-void *PrintHello(void *threadid) {
-    // 对传入的参数进行强制类型转换，由无类型指针变为整形数指针，然后再读取
-    int tid = *((int *)threadid);
+void* PrintHello(void* threadid) {
+  // 对传入的参数进行强制类型转换，由无类型指针变为整形数指针，然后再读取
+  int tid = *((int*)threadid);
 
-    std::cout << "Hi, 我是线程 ID:[" << tid << "]" << std::endl;
+  std::cout << "Hi, 我是线程 ID:[" << tid << "]" << std::endl;
 
-    // 打印实例地址
-    InstanceExample::get_instance()->Print();
-    return NULL;
+  // 打印实例地址
+  InstanceExample::get_instance()->Print();
+  return NULL;
 }
 
-#define NumberOfThreads 5// 宏定义不需要加逗号
-int main(){
-    std::vector<std::thread> Threads;
-    int index_i[NumberOfThreads] = {0};
-    for(int i=0; i < NumberOfThreads; i++){
-        index_i[i] = i;
-        Threads.emplace_back(PrintHello, (void*)(&(index_i[i])));
-    }
-    for (auto &it:Threads) it.join();
-    std::cout << "main() : 结束!!!" << std::endl;
-    return 0;
+#define NumberOfThreads 5  // 宏定义不需要加逗号
+int main() {
+  std::vector<std::thread> Threads;
+  int index_i[NumberOfThreads] = {0};
+  for (int i = 0; i < NumberOfThreads; i++) {
+    index_i[i] = i;
+    Threads.emplace_back(PrintHello, (void*)(&(index_i[i])));
+  }
+  for (auto& it : Threads)
+    it.join();
+  std::cout << "main() : 结束!!!" << std::endl;
+  return 0;
 }

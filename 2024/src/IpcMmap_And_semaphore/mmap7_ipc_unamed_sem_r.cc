@@ -14,26 +14,22 @@ Unamed semaphores 进程间通信
 覆盖多写和读：需要解决写和读竞争的问题
 */
 const int NUM_SLOTS = 50;
-const size_t MEMORY_SIZE = sizeof(sem_t) * 2 + sizeof(std::atomic<int>) * 3 + NUM_SLOTS * sizeof(int); 
+const size_t MEMORY_SIZE = sizeof(sem_t) * 2 + sizeof(std::atomic<int>) * 3 + NUM_SLOTS * sizeof(int);
 const char* SHARED_MEMORY_NAME = "/my_shared_memoryw7";
 
-enum RWStatus {
-  IDLE = 0,
-  WRITING,
-  READING
-};
+enum RWStatus { IDLE = 0, WRITING, READING };
 
 struct SharedData {
   sem_t sem_write;
   sem_t sem_read;
   std::atomic<int> rw_status;  // 读写状态
-  std::atomic<int> next_write_slot_; 
-  std::atomic<int> next_read_slot_; 
+  std::atomic<int> next_write_slot_;
+  std::atomic<int> next_read_slot_;
   int data[NUM_SLOTS];
 };
 
 class SharedMemory {
-public:
+ public:
   SharedMemory() {
     // 打开共享内存对象
     shm_fd_ = shm_open(SHARED_MEMORY_NAME, O_RDWR, S_IRUSR | S_IWUSR);
@@ -43,8 +39,7 @@ public:
     }
 
     // 映射共享内存到进程地址空间
-    shared_data_ = static_cast<SharedData*>(mmap(NULL, MEMORY_SIZE, PROT_READ | PROT_WRITE,
-                                        MAP_SHARED, shm_fd_, 0));
+    shared_data_ = static_cast<SharedData*>(mmap(NULL, MEMORY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd_, 0));
     if (shared_data_ == MAP_FAILED) {
       std::cerr << "mmap failed: " << strerror(errno) << std::endl;
       exit(1);
@@ -72,13 +67,14 @@ public:
 
   void Read(int& value, bool& should_continue) {
     sem_wait(&shared_data_->sem_read);
-    while ((shared_data_->next_write_slot_.load() - shared_data_->next_read_slot_.load() + NUM_SLOTS) % NUM_SLOTS == 0) {
+    while ((shared_data_->next_write_slot_.load() - shared_data_->next_read_slot_.load() + NUM_SLOTS) % NUM_SLOTS ==
+           0) {
       int expected_status = expected_status_.load();
       if (shared_data_->rw_status.compare_exchange_strong(expected_status, READING)) {
         break;  // 获取写锁成功，跳出循环
       }
     }
-    
+
     int slot = shared_data_->next_read_slot_.fetch_add(1, std::memory_order_relaxed) % NUM_SLOTS;
     value = shared_data_->data[slot];
     std::cout << "Reader Process: read " << value << " from slot " << slot << std::endl;

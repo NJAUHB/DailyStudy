@@ -60,8 +60,8 @@ class EntityInfoBase {
 };
 
 class EntityInfoV3_0 : public EntityInfoBase {
-  public:
-    uint8_t reserved[32];
+ public:
+  uint8_t reserved[32];
 };
 //**********************************
 int main() {
@@ -124,7 +124,8 @@ int main() {
   std::shared_ptr<EntityInfoBase> iNfO3_ = std::make_shared<EntityInfoV3_0>();
   // iNfO3_->reserved;
   // info3_->reserved;
-  std::shared_ptr<EntityInfoV3_0> INFO3 = std::static_pointer_cast<EntityInfoV3_0>(info3_);//结论：正常编译不会存在报错，asan会报错
+  std::shared_ptr<EntityInfoV3_0> INFO3 =
+      std::static_pointer_cast<EntityInfoV3_0>(info3_);  //结论：正常编译不会存在报错，asan会报错
   // INFO3->reserved;
   INFO3->name;
   INFO3->type;

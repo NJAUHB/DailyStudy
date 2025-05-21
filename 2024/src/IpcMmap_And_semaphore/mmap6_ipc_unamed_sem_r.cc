@@ -13,7 +13,7 @@ Unamed semaphores 进程间通信
 匿名信号量用于进程间同步: 基于共享内存
 */
 const int NUM_SLOTS = 100;
-const size_t MEMORY_SIZE = sizeof(sem_t) * 2 + NUM_SLOTS * sizeof(int); // 包含信号量空间
+const size_t MEMORY_SIZE = sizeof(sem_t) * 2 + NUM_SLOTS * sizeof(int);  // 包含信号量空间
 const char* SHARED_MEMORY_NAME = "/my_shared_memory6";
 
 struct SharedData {
@@ -23,7 +23,7 @@ struct SharedData {
 };
 
 class SharedMemory {
-public:
+ public:
   SharedMemory() {
     // 打开共享内存对象
     shm_fd_ = shm_open(SHARED_MEMORY_NAME, O_RDWR, S_IRUSR | S_IWUSR);
@@ -33,8 +33,7 @@ public:
     }
 
     // 映射共享内存到进程地址空间
-    shared_data_ = static_cast<SharedData*>(mmap(NULL, MEMORY_SIZE, PROT_READ | PROT_WRITE,
-                                        MAP_SHARED, shm_fd_, 0));
+    shared_data_ = static_cast<SharedData*>(mmap(NULL, MEMORY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd_, 0));
     if (shared_data_ == MAP_FAILED) {
       std::cerr << "mmap failed: " << strerror(errno) << std::endl;
       exit(1);
@@ -65,24 +64,23 @@ public:
 
     int slot = next_read_slot_.fetch_add(1, std::memory_order_relaxed) % NUM_SLOTS;
     value = shared_data_->data[slot];
-    std::cout << "Reader Process: read " << value
-              << " from slot " << slot << std::endl;
+    std::cout << "Reader Process: read " << value << " from slot " << slot << std::endl;
 
     sem_post(&shared_data_->sem_write);
   }
 
-private:
+ private:
   SharedData* shared_data_;
   std::atomic<int> next_write_slot_;
   std::atomic<int> next_read_slot_;
-  int shm_fd_; 
+  int shm_fd_;
 };
 
 void ReaderThread(SharedMemory& shared_memory) {
-  for (int i = 0; ; ++i) {
+  for (int i = 0;; ++i) {
     int value;
     shared_memory.Read(value);
-    std::this_thread::sleep_for(std::chrono::milliseconds(15)); 
+    std::this_thread::sleep_for(std::chrono::milliseconds(15));
   }
 }
 

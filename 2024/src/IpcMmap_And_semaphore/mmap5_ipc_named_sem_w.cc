@@ -17,7 +17,7 @@ const char* SEM_WRITE_NAME = "/my_sem_write";
 const char* SEM_READ_NAME = "/my_sem_read";
 
 class SharedMemory {
-public:
+ public:
   SharedMemory() {
     // 创建或打开共享内存对象
     shm_fd_ = shm_open(SHARED_MEMORY_NAME, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
@@ -33,8 +33,7 @@ public:
     }
 
     // 映射共享内存到进程地址空间
-    memory_ = static_cast<int*>(mmap(NULL, MEMORY_SIZE, PROT_READ | PROT_WRITE,
-                                     MAP_SHARED, shm_fd_, 0));
+    memory_ = static_cast<int*>(mmap(NULL, MEMORY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd_, 0));
     if (memory_ == MAP_FAILED) {
       std::cerr << "mmap failed: " << strerror(errno) << std::endl;
       exit(1);
@@ -74,30 +73,30 @@ public:
 
   void Write(int value) {
     // 等待信号量，表示有可用空间
-    sem_wait(sem_write_); // 这一行如果注释掉，就会一直覆盖写（无锁）
+    sem_wait(sem_write_);  // 这一行如果注释掉，就会一直覆盖写（无锁）
 
     int slot = next_write_slot_.fetch_add(1, std::memory_order_relaxed) % NUM_SLOTS;
     memory_[slot] = value;
-    std::cout << "Writer Process: Thread " << std::this_thread::get_id() 
-              << " wrote " << value << " to slot " << slot << std::endl;
+    std::cout << "Writer Process: Thread " << std::this_thread::get_id() << " wrote " << value << " to slot " << slot
+              << std::endl;
 
     // 通知读者有数据可读
-    sem_post(sem_read_); 
+    sem_post(sem_read_);
   }
 
-private:
+ private:
   int* memory_;
   std::atomic<int> next_write_slot_;
   std::atomic<int> next_read_slot_;
-  int shm_fd_; 
+  int shm_fd_;
   sem_t* sem_write_;
   sem_t* sem_read_;
 };
 
 void WriterThread(SharedMemory& shared_memory) {
-  for (int i = 0; ; ++i) {
+  for (int i = 0;; ++i) {
     shared_memory.Write(i * 10);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10)); 
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 
@@ -106,7 +105,7 @@ int main() {
 
   // 创建多个写者线程
   std::vector<std::thread> writers;
-  for (int i = 0; i < 3; ++i) { 
+  for (int i = 0; i < 3; ++i) {
     writers.emplace_back(WriterThread, std::ref(shared_memory));
   }
 
